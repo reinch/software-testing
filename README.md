@@ -1,1 +1,1 @@
-# Tugas Pengetesan Perangkt Lunak
+# Tugas Pengetesan Perangkat Lunak
