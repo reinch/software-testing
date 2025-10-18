@@ -1,2 +1,1 @@
-# TugasPL1
-uploading file ke github
+# Tugas Pengetesan Perangkt Lunak
