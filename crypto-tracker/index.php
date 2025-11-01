@@ -1,9 +1,9 @@
 <?php
 // === INCLUDE CONFIG (opsional) ===
-include("config/config.php");
+    include("config/config.php");
 
 // === AMBIL DATA MARKET (Top 10) ===
-$endpoint_market = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false";
+$endpoint_market = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=12&page=1&sparkline=false";
 $data_market = http_request_get($endpoint_market);
 $cryptoNews = $data_market ? json_decode($data_market, true) : null;
 
@@ -26,97 +26,39 @@ if (!$data_market) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Tracker</title>
+    <title>Crypto Real-Time Tracker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* === LIGHT MODE (DEFAULT) === */
+        /* === VARIABEL WARNA === */
         :root {
             --bg-body: #f8f9fa;
             --bg-card: #ffffff;
             --text-primary: #212529;
+            --text-secondary: #495057;
             --text-muted: #6c757d;
+            --text-price: #212529;
             --border: #dee2e6;
             --shadow: rgba(0,0,0,0.1);
             --navbar-bg: #198754;
             --trending-bg: #ffffff;
-            --rank-bg: linear-gradient(135deg, #dc3545, #c82333);
-            --badge-bg: linear-gradient(135deg, #dc3545, #c82333);
+            --card-bg: #ffffff;
+            --card-border: #dee2e6;
         }
 
-        /* === WARNA TEKS & CARD DI DARK MODE === */
         [data-theme="dark"] {
             --bg-body: #121212;
             --bg-card: #1e1e1e;
-            --text-primary: #ffffff;           /* Teks utama */
-            --text-secondary: #e9ecef;         /* Teks sekunder */
+            --text-primary: #ffffff;
+            --text-secondary: #e9ecef;
             --text-muted: #adb5bd;
-            --text-success: #28a745;
-            --text-danger: #dc3545;
-            --text-info: #17a2b8;
+            --text-price: #ffffff;
             --border: #343a40;
             --shadow: rgba(0,0,0,0.4);
             --navbar-bg: #0f5132;
             --trending-bg: #1e1e1e;
-            --rank-bg: linear-gradient(135deg, #ff5252, #d32f2f);
-            --badge-bg: linear-gradient(135deg, #ff5252, #d32f2f);
-            --card-bg: #2d2d2d;                /* Card utama */
+            --card-bg: #2d2d2d;
             --card-border: #404040;
-        }
-
-        /* Card utama */
-        .card {
-            background: var(--card-bg, var(--bg-card)) !important;
-            border-color: var(--card-border, var(--border)) !important;
-            color: var(--text-primary) !important;
-        }
-
-        /* Teks di dalam card */
-        .card h5,
-        .card .fw-bold,
-        .card .text-primary,
-        .card .text-success,
-        .card .text-danger {
-            color: var(--text-primary) !important;
-        }
-
-        .card small.text-muted {
-            color: var(--text-muted) !important;
-        }
-
-        /* Harga & perubahan */
-        .price-up { color: #28a745 !important; }
-        .price-down { color: #dc3545 !important; }
-
-        /* Trending card */
-        .trending-card-modern {
-            background: var(--card-bg, var(--bg-card)) !important;
-            color: var(--text-primary) !important;
-        }
-
-        .trending-card-modern h6,
-        .trending-card-modern small {
-            color: var(--text-primary) !important;
-        }
-        .trending-card-modern .text-muted {
-            color: var(--text-muted) !important;
-        }
-
-        /* Input search */
-        #search {
-            background: var(--bg-card) !important;
-            border-color: var(--border) !important;
-            color: var(--text-primary) !important;
-        }
-        #search::placeholder {
-            color: var(--text-muted) !important;
-        }
-
-        /* Alert */
-        .alert {
-            background: var(--bg-card) !important;
-            border-color: var(--border) !important;
-            color: var(--text-primary) !important;
         }
 
         /* === GENERAL === */
@@ -133,10 +75,11 @@ if (!$data_market) {
         }
 
         .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+            background: var(--card-bg) !important;
+            border: 1px solid var(--card-border) !important;
             box-shadow: 0 4px 12px var(--shadow);
             transition: all 0.3s ease;
+            color: var(--text-primary);
         }
 
         .crypto-card:hover {
@@ -145,8 +88,18 @@ if (!$data_market) {
         }
 
         .text-muted { color: var(--text-muted) !important; }
+        .text-price { color: var(--text-price) !important; }
 
-        /* === TRENDING === */
+        /* === WARNA KHUSUS (PASTI HIDUP) === */
+        .price-up { color: #28a745 !important; }
+        .price-down { color: #dc3545 !important; }
+        .text-info { color: #17a2b8 !important; }
+        .text-success { color: #28a745 !important; }
+
+        [data-theme="dark"] .text-info { color: #17a2b8 !important; }
+        [data-theme="dark"] .text-success { color: #28a745 !important; }
+
+        /* === TRENDING SECTION === */
         .trending-container {
             background: var(--trending-bg);
             border-radius: 12px;
@@ -155,12 +108,13 @@ if (!$data_market) {
         }
 
         .trending-card-modern {
-            background: var(--bg-card);
+            background: var(--card-bg) !important;
             border-radius: 12px !important;
+            color: var(--text-primary) !important;
         }
 
         .rank-badge {
-            background: var(--rank-bg);
+            background: linear-gradient(135deg, #dc3545, #c82333);
             width: 36px !important;
             height: 36px !important;
             color: white;
@@ -175,7 +129,7 @@ if (!$data_market) {
         }
 
         .bg-gradient-danger {
-            background: var(--badge-bg) !important;
+            background: linear-gradient(135deg, #dc3545, #c82333) !important;
             font-size: 0.75rem;
         }
 
@@ -195,7 +149,7 @@ if (!$data_market) {
             height: 40px !important;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--border);
+            border: 2px solid var(--card-border);
             flex-shrink: 0 !important;
         }
 
@@ -203,6 +157,16 @@ if (!$data_market) {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        /* === INPUT SEARCH === */
+        #search {
+            background: var(--bg-card) !important;
+            border-color: var(--border) !important;
+            color: var(--text-primary) !important;
+        }
+        #search::placeholder {
+            color: var(--text-muted) !important;
         }
 
         /* === SCROLL INDICATORS === */
@@ -272,7 +236,6 @@ if (!$data_market) {
         .theme-toggle .fa-sun { left: 6px; }
         .theme-toggle .fa-moon { right: 6px; }
         .theme-toggle.active .fa-sun { opacity: 1; }
-        .theme-toggle.active .fa-moon { opacity: 0; }
         .theme-toggle .fa-moon { opacity: 1; }
         .theme-toggle.active .fa-moon { opacity: 0; }
     </style>
@@ -283,7 +246,7 @@ if (!$data_market) {
     <nav class="navbar bg-success navbar-expand-lg shadow-sm" data-bs-theme="dark">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="#">
-                <i class="fab fa-bitcoin"></i> Crypto Tracker
+                <i class="fab fa-bitcoin"></i> Crypto Real-Time Tracker
             </a>
             <div class="d-flex align-items-center">
                 <div class="theme-toggle me-3" id="themeToggle">
@@ -440,14 +403,14 @@ if (!$data_market) {
                                      alt="${coin.name}" class="rounded-circle me-3" width="50" height="50"
                                      onerror="this.src='https://via.placeholder.com/50/6c757d/fff?text=?'">
                                 <div>
-                                    <h5 class="mb-0 fw-bold">${coin.name}</h5>
+                                    <h5 class="mb-0 fw-bold text-primary">${coin.name}</h5>
                                     <small class="text-muted text-uppercase">${coin.symbol}</small>
                                 </div>
                             </div>
                             <hr>
                             <div class="row text-center mb-2">
                                 <div class="col-6">
-                                    <div class="fw-bold fs-5">$${price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                                    <div class="fw-bold fs-5 text-price">$${price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
                                     <small class="text-muted">Harga</small>
                                 </div>
                                 <div class="col-6">
@@ -460,7 +423,7 @@ if (!$data_market) {
                             <hr>
                             <div class="row text-center">
                                 <div class="col-6">
-                                    <div class="text-primary fw-bold">$${(marketCap / 1e9).toFixed(1)}B</div>
+                                    <div class="text-info fw-bold">$${(marketCap / 1e9).toFixed(1)}B</div>
                                     <small class="text-muted">Market Cap</small>
                                 </div>
                                 <div class="col-6">
