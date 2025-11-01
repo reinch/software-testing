@@ -44,18 +44,79 @@ if (!$data_market) {
             --badge-bg: linear-gradient(135deg, #dc3545, #c82333);
         }
 
-        /* === DARK MODE === */
+        /* === WARNA TEKS & CARD DI DARK MODE === */
         [data-theme="dark"] {
             --bg-body: #121212;
             --bg-card: #1e1e1e;
-            --text-primary: #e9ecef;
+            --text-primary: #ffffff;           /* Teks utama */
+            --text-secondary: #e9ecef;         /* Teks sekunder */
             --text-muted: #adb5bd;
+            --text-success: #28a745;
+            --text-danger: #dc3545;
+            --text-info: #17a2b8;
             --border: #343a40;
-            --shadow: rgba(0,0,0,0.3);
+            --shadow: rgba(0,0,0,0.4);
             --navbar-bg: #0f5132;
             --trending-bg: #1e1e1e;
             --rank-bg: linear-gradient(135deg, #ff5252, #d32f2f);
             --badge-bg: linear-gradient(135deg, #ff5252, #d32f2f);
+            --card-bg: #2d2d2d;                /* Card utama */
+            --card-border: #404040;
+        }
+
+        /* Card utama */
+        .card {
+            background: var(--card-bg, var(--bg-card)) !important;
+            border-color: var(--card-border, var(--border)) !important;
+            color: var(--text-primary) !important;
+        }
+
+        /* Teks di dalam card */
+        .card h5,
+        .card .fw-bold,
+        .card .text-primary,
+        .card .text-success,
+        .card .text-danger {
+            color: var(--text-primary) !important;
+        }
+
+        .card small.text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        /* Harga & perubahan */
+        .price-up { color: #28a745 !important; }
+        .price-down { color: #dc3545 !important; }
+
+        /* Trending card */
+        .trending-card-modern {
+            background: var(--card-bg, var(--bg-card)) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .trending-card-modern h6,
+        .trending-card-modern small {
+            color: var(--text-primary) !important;
+        }
+        .trending-card-modern .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        /* Input search */
+        #search {
+            background: var(--bg-card) !important;
+            border-color: var(--border) !important;
+            color: var(--text-primary) !important;
+        }
+        #search::placeholder {
+            color: var(--text-muted) !important;
+        }
+
+        /* Alert */
+        .alert {
+            background: var(--bg-card) !important;
+            border-color: var(--border) !important;
+            color: var(--text-primary) !important;
         }
 
         /* === GENERAL === */
