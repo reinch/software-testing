@@ -47,6 +47,132 @@ if (!$data_market) {
         .navbar-brand i { color: #ffc107; }
         .trending-card { height: 120px; border-radius: 8px; }
         .carousel-control-prev, .carousel-control-next { width: 5%; }
+
+        /* === TRENDING CRYPTO - MODERN DESIGN === */
+.trending-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #fff;
+    padding: 8px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.trending-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 8px 0;
+    gap: 12px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.trending-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.trending-card-item {
+    min-width: 220px;
+    max-width: 220px;
+}
+
+.trending-card-modern {
+    transition: all 0.3s ease;
+    border-radius: 12px !important;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+}
+
+.trending-card-modern:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
+}
+
+/* === FIX: Rank Badge & Text Wrap === */
+.rank-badge {
+    width: 36px !important;
+    height: 36px !important;
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    flex-shrink: 0 !important;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.coin-img {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #eee;
+    flex-shrink: 0 !important;
+}
+
+.trending-card-modern .card-body {
+    padding: 12px !important;
+}
+
+.trending-card-item {
+    min-width: 230px;
+    max-width: 230px;
+}
+
+/* Badge api lebih kecil & rapi */
+.bg-gradient-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+    font-size: 0.75rem;
+}
+
+/* Text wrap & truncate */
+.text-truncate { 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+}
+
+/* Scroll Indicators */
+.scroll-indicator {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    user-select: none;
+}
+
+.trending-container:hover .scroll-indicator {
+    opacity: 1;
+}
+
+.scroll-indicator.left { left: 10px; }
+.scroll-indicator.right { right: 10px; }
+
+.scroll-indicator:active {
+    background: rgba(0, 0, 0, 0.9);
+    transform: translateY(-50%) scale(0.95);
+}
+
+/* Mobile: Hide indicators, use swipe */
+@media (max-width: 768px) {
+    .scroll-indicator { display: none; }
+    .trending-card-item { min-width: 180px; max-width: 180px; }
+}
     </style>
 </head>
 <body>
@@ -78,62 +204,72 @@ if (!$data_market) {
                 </div>
             </div>
 
-            <!-- FITUR BARU: TRENDING CRYPTO (Seperti Berita) -->
-            <?php if ($trendingNews && isset($trendingNews['coins']) && !empty($trendingNews['coins'])): ?>
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h5 class="mb-3"><i class="fas fa-fire"></i> Trending Crypto (Hot Now)</h5>
-                        <p class="text-muted small mb-2">Crypto yang lagi populer & dibicarakan banyak orang</p>
-                    </div>
-                    <div id="trending-carousel" class="col-12">
-                        <div id="trendingCarousel" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
-                                <?php 
-                                $trendingCoins = array_slice($trendingNews['coins'], 0, 15); // Ambil 15 untuk 3 slide (5 per slide)
-                                for ($i = 0; $i < count($trendingCoins); $i += 5): 
-                                    $slideCoins = array_slice($trendingCoins, $i, 5);
-                                    $active = ($i === 0) ? 'active' : '';
-                                ?>
-                                <div class="carousel-item <?= $active ?>">
-                                    <div class="row">
-                                        <?php foreach ($slideCoins as $coin): 
-                                            $item = $coin['item'];
-                                            $score = $coin['score'] ?? 0;
-                                        ?>
-                                        <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-2">
-                                            <div class="card trending-card bg-warning bg-opacity-10 border-warning h-100">
-                                                <div class="card-body p-3">
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="<?= $item['large'] ?? 'https://via.placeholder.com/30' ?>" 
-                                                             alt="<?= $item['name'] ?>" class="rounded me-2" width="30" height="30">
-                                                        <div class="flex-grow-1">
-                                                            <h6 class="mb-0 fw-bold"><?= $item['name'] ?></h6>
-                                                            <small class="text-muted"><?= strtoupper($item['symbol']) ?></small>
-                                                        </div>
-                                                        <div class="text-end">
-                                                            <small class="badge bg-warning text-dark">Score: <?= round($score) ?></small>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <?php endforeach; ?>
-                                    </div>
+            <!-- FITUR: TRENDING CRYPTO (FIX: Rank + Bulat Tetap) -->
+<?php if ($trendingNews && isset($trendingNews['coins']) && !empty($trendingNews['coins'])): ?>
+    <div class="mb-5">
+        <div class="d-flex align-items-center mb-3">
+            <h5 class="mb-0"><i class="fas fa-fire text-danger"></i> Trending Crypto (Hot Now)</h5>
+            <small class="text-muted ms-2">Crypto paling banyak dicari & dibicarakan</small>
+        </div>
+
+        <div class="trending-container position-relative">
+            <!-- Tombol Kiri -->
+            <div class="scroll-indicator left"><i class="fas fa-chevron-left"></i></div>
+
+            <!-- Scrollable Grid -->
+            <div class="trending-grid">
+                <?php 
+                $trendingCoins = array_slice($trendingNews['coins'], 0, 10);
+                foreach ($trendingCoins as $index => $coin): 
+                    $item = $coin['item'];
+                    $rank = $index + 1;
+                ?>
+                <div class="trending-card-item">
+                    <div class="card h-100 border-0 shadow-sm trending-card-modern">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center">
+                                <!-- Rank Lingkaran (Tetap Bulat) -->
+                                <div class="rank-badge flex-shrink-0 me-3">
+                                    #<?= $rank ?>
                                 </div>
-                                <?php endfor; ?>
+
+                                <!-- Logo -->
+                                <img src="<?= $item['large'] ?? 'https://via.placeholder.com/40' ?>" 
+                                     alt="<?= htmlspecialchars($item['name']) ?>" 
+                                     class="coin-img flex-shrink-0 me-3">
+
+                                <!-- Nama & Symbol (Wrap jika panjang) -->
+                                <div class="flex-grow-1 text-truncate">
+                                    <h6 class="mb-0 fw-bold text-dark text-truncate" style="max-width: 120px;">
+                                        <?= htmlspecialchars($item['name']) ?>
+                                    </h6>
+                                    <small class="text-uppercase fw-bold text-muted">
+                                        <?= htmlspecialchars($item['symbol']) ?>
+                                    </small>
+                                </div>
+
+                                <!-- Badge Trending (ikon api) -->
+                                <div class="ms-auto">
+                                    <span class="badge bg-gradient-danger text-white px-2 py-1">
+                                        <i class="fas fa-fire"></i>
+                                    </span>
+                                </div>
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#trendingCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#trendingCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            </button>
                         </div>
                     </div>
                 </div>
-            <?php else: ?>
-                <div class="alert alert-info mb-4">Trending data tidak tersedia saat ini.</div>
-            <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Tombol Kanan -->
+            <div class="scroll-indicator right"><i class="fas fa-chevron-right"></i></div>
+        </div>
+    </div>
+<?php else: ?>
+    <div class="alert alert-light border mb-4">
+        <i class="fas fa-info-circle"></i> Data trending tidak tersedia.
+    </div>
+<?php endif; ?>
 
             <!-- LOADING STATE -->
             <div id="loading" class="text-center py-5">
@@ -249,6 +385,24 @@ if (!$data_market) {
         } else {
             loading.innerHTML = `<p class="text-danger">Data gagal dimuat.</p>`;
         }
+
+        // === Horizontal Scroll dengan Tombol ===
+document.querySelectorAll('.scroll-indicator').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const container = document.querySelector('.trending-grid');
+        const direction = btn.classList.contains('left') ? -1 : 1;
+        const scrollAmount = 240; // Sesuai lebar card + gap
+        container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    });
+});
+
+// Optional: Auto-hide indicators saat scroll ke ujung
+document.querySelector('.trending-grid')?.addEventListener('scroll', function() {
+    const scrollLeft = this.scrollLeft;
+    const maxScroll = this.scrollWidth - this.clientWidth;
+    document.querySelector('.scroll-indicator.left').style.opacity = scrollLeft > 50 ? '1' : '0';
+    document.querySelector('.scroll-indicator.right').style.opacity = (maxScroll - scrollLeft) > 50 ? '1' : '0';
+});
     </script>
 </body>
 </html>
