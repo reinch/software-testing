@@ -1,8 +1,8 @@
 <?php
 // === INCLUDE CONFIG (opsional) ===
-    include("config/config.php");
+include("config/config.php");
 
-// === AMBIL DATA MARKET (Top 10) ===
+// === AMBIL DATA MARKET (Top 12) ===
 $endpoint_market = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=12&page=1&sparkline=false";
 $data_market = http_request_get($endpoint_market);
 $cryptoNews = $data_market ? json_decode($data_market, true) : null;
@@ -271,8 +271,8 @@ if (!$data_market) {
             <!-- Header + Search -->
             <div class="row mb-4">
                 <div class="col-12">
-                    <h2 class="mb-1"><i class="fas fa-chart-line"></i> Top 10 Crypto</h2>
-                    <p class="text-muted mb-3">Live dari CoinGecko • Update otomatis</p>
+                    <h2 class="mb-1"><i class="fas fa-chart-line"></i> Top 12 Crypto on Market</h2>
+                    <p class="text-muted mb-3">Live dari CoinGecko • Update otomatis Tiap Request</p>
                     <input type="text" id="search" class="form-control form-control-lg" 
                            placeholder="Cari crypto... (contoh: bitcoin, eth)">
                 </div>
@@ -283,7 +283,7 @@ if (!$data_market) {
                 <div class="mb-5">
                     <div class="d-flex align-items-center mb-3">
                         <h5 class="mb-0"><i class="fas fa-fire text-danger"></i> Trending Crypto (Hot Now)</h5>
-                        <small class="text-muted ms-2">Crypto paling banyak dicari & dibicarakan</small>
+                        <small class="text-muted ms-2">Crypto paling banyak dicari & dibicarakan dalam 24 jam</small>
                     </div>
 
                     <div class="trending-container position-relative">
@@ -339,7 +339,7 @@ if (!$data_market) {
                 <p class="mt-3 text-muted">Memuat data crypto...</p>
             </div>
 
-            <!-- Top 10 Cards -->
+            <!-- Top 10 Cards Crypto on Market 24h -->
             <div class="row" id="crypto-container" style="display: none;"></div>
         <?php endif; ?>
     </div>
