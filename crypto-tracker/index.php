@@ -1,5 +1,5 @@
 <?php
-// === FUNGSI cURL ===
+// === INCLUDE CONFIG (opsional) ===
 include("config/config.php");
 
 // === AMBIL DATA MARKET (Top 10) ===
@@ -30,64 +30,78 @@ if (!$data_market) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* === GENERAL STYLE === */
+        /* === LIGHT MODE (DEFAULT) === */
+        :root {
+            --bg-body: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-primary: #212529;
+            --text-muted: #6c757d;
+            --border: #dee2e6;
+            --shadow: rgba(0,0,0,0.1);
+            --navbar-bg: #198754;
+            --trending-bg: #ffffff;
+            --rank-bg: linear-gradient(135deg, #dc3545, #c82333);
+            --badge-bg: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        /* === DARK MODE === */
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
+            --text-primary: #e9ecef;
+            --text-muted: #adb5bd;
+            --border: #343a40;
+            --shadow: rgba(0,0,0,0.3);
+            --navbar-bg: #0f5132;
+            --trending-bg: #1e1e1e;
+            --rank-bg: linear-gradient(135deg, #ff5252, #d32f2f);
+            --badge-bg: linear-gradient(135deg, #ff5252, #d32f2f);
+        }
+
+        /* === GENERAL === */
         body {
-            background: #f8f9fa;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background 0.3s ease, color 0.3s ease;
             font-family: 'Segoe UI', sans-serif;
         }
-        .price-up { color: #28a745 !important; }
-        .price-down { color: #dc3545 !important; }
-        .navbar-brand i { color: #ffc107; }
 
-        /* === CRYPTO CARD === */
-        .crypto-card {
-            transition: all 0.3s ease;
-            border: none;
-            border-radius: 12px;
-            overflow: hidden;
+        .navbar {
+            background: var(--navbar-bg) !important;
+            transition: background 0.3s ease;
         }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
         .crypto-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.15) !important;
+            box-shadow: 0 12px 25px var(--shadow) !important;
         }
 
-        /* === TRENDING SECTION === */
+        .text-muted { color: var(--text-muted) !important; }
+
+        /* === TRENDING === */
         .trending-container {
-            position: relative;
-            overflow: hidden;
+            background: var(--trending-bg);
             border-radius: 12px;
-            background: #fff;
+            box-shadow: 0 2px 10px var(--shadow);
             padding: 8px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        .trending-grid {
-            display: flex;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            padding: 8px 0;
-            gap: 12px;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        .trending-grid::-webkit-scrollbar { display: none; }
-        .trending-card-item { min-width: 230px; max-width: 230px; }
 
         .trending-card-modern {
-            transition: all 0.3s ease;
+            background: var(--bg-card);
             border-radius: 12px !important;
-            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
         }
-        .trending-card-modern:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
-        }
-        .trending-card-modern .card-body { padding: 12px !important; }
 
-        /* === RANK BADGE & LOGO === */
         .rank-badge {
+            background: var(--rank-bg);
             width: 36px !important;
             height: 36px !important;
-            background: linear-gradient(135deg, #dc3545, #c82333);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -98,20 +112,32 @@ if (!$data_market) {
             flex-shrink: 0 !important;
             box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
         }
+
+        .bg-gradient-danger {
+            background: var(--badge-bg) !important;
+            font-size: 0.75rem;
+        }
+
+        .trending-grid {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 8px 0;
+            gap: 12px;
+            scrollbar-width: none;
+        }
+        .trending-grid::-webkit-scrollbar { display: none; }
+        .trending-card-item { min-width: 230px; max-width: 230px; }
+
         .coin-img {
             width: 40px !important;
             height: 40px !important;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #eee;
+            border: 2px solid var(--border);
             flex-shrink: 0 !important;
         }
 
-        /* === BADGE & TEXT === */
-        .bg-gradient-danger {
-            background: linear-gradient(135deg, #dc3545, #c82333) !important;
-            font-size: 0.75rem;
-        }
         .text-truncate {
             white-space: nowrap;
             overflow: hidden;
@@ -136,31 +162,74 @@ if (!$data_market) {
             z-index: 10;
             opacity: 0;
             transition: opacity 0.3s ease;
-            user-select: none;
         }
         .trending-container:hover .scroll-indicator { opacity: 1; }
         .scroll-indicator.left { left: 10px; }
         .scroll-indicator.right { right: 10px; }
-        .scroll-indicator:active {
-            background: rgba(0,0,0,0.9);
-            transform: translateY(-50%) scale(0.95);
-        }
 
-        /* === RESPONSIVE === */
         @media (max-width: 768px) {
             .scroll-indicator { display: none; }
             .trending-card-item { min-width: 180px; max-width: 180px; }
         }
+
+        /* === DARK MODE TOGGLE === */
+        .theme-toggle {
+            width: 50px;
+            height: 24px;
+            background: #ccc;
+            border-radius: 50px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        .theme-toggle.active {
+            background: #198754;
+        }
+        .theme-toggle.active::after {
+            transform: translateX(26px);
+        }
+        .theme-toggle i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: #fff;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .theme-toggle .fa-sun { left: 6px; }
+        .theme-toggle .fa-moon { right: 6px; }
+        .theme-toggle.active .fa-sun { opacity: 1; }
+        .theme-toggle.active .fa-moon { opacity: 0; }
+        .theme-toggle .fa-moon { opacity: 1; }
+        .theme-toggle.active .fa-moon { opacity: 0; }
     </style>
 </head>
 <body>
 
-    <!-- Navbar -->
+    <!-- Navbar dengan Toggle -->
     <nav class="navbar bg-success navbar-expand-lg shadow-sm" data-bs-theme="dark">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="#">
                 <i class="fab fa-bitcoin"></i> Crypto Tracker
             </a>
+            <div class="d-flex align-items-center">
+                <div class="theme-toggle me-3" id="themeToggle">
+                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -194,12 +263,7 @@ if (!$data_market) {
                     </div>
 
                     <div class="trending-container position-relative">
-                        <!-- Scroll Left -->
-                        <div class="scroll-indicator left">
-                            <i class="fas fa-chevron-left"></i>
-                        </div>
-
-                        <!-- Scrollable Grid -->
+                        <div class="scroll-indicator left"><i class="fas fa-chevron-left"></i></div>
                         <div class="trending-grid">
                             <?php 
                             $trendingCoins = array_slice($trendingNews['coins'], 0, 10);
@@ -211,25 +275,18 @@ if (!$data_market) {
                                     <div class="card h-100 border-0 shadow-sm trending-card-modern">
                                         <div class="card-body p-3">
                                             <div class="d-flex align-items-center">
-                                                <!-- Rank -->
                                                 <div class="rank-badge flex-shrink-0 me-3">#<?= $rank ?></div>
-                                                
-                                                <!-- Logo -->
                                                 <img src="<?= $item['large'] ?? 'https://via.placeholder.com/40' ?>" 
                                                      alt="<?= htmlspecialchars($item['name']) ?>" 
                                                      class="coin-img flex-shrink-0 me-3">
-
-                                                <!-- Nama & Symbol -->
                                                 <div class="flex-grow-1 text-truncate">
-                                                    <h6 class="mb-0 fw-bold text-dark text-truncate" style="max-width: 120px;">
+                                                    <h6 class="mb-0 fw-bold text-truncate" style="max-width: 120px;">
                                                         <?= htmlspecialchars($item['name']) ?>
                                                     </h6>
                                                     <small class="text-uppercase fw-bold text-muted">
                                                         <?= htmlspecialchars($item['symbol']) ?>
                                                     </small>
                                                 </div>
-
-                                                <!-- Badge Api -->
                                                 <div class="ms-auto">
                                                     <span class="badge bg-gradient-danger text-white px-2 py-1">
                                                         <i class="fas fa-fire"></i>
@@ -241,11 +298,7 @@ if (!$data_market) {
                                 </div>
                             <?php endforeach; ?>
                         </div>
-
-                        <!-- Scroll Right -->
-                        <div class="scroll-indicator right">
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
+                        <div class="scroll-indicator right"><i class="fas fa-chevron-right"></i></div>
                     </div>
                 </div>
             <?php else: ?>
@@ -254,7 +307,7 @@ if (!$data_market) {
                 </div>
             <?php endif; ?>
 
-            <!-- Loading State -->
+            <!-- Loading -->
             <div id="loading" class="text-center py-5">
                 <div class="spinner-border text-success" role="status">
                     <span class="visually-hidden">Loading...</span>
@@ -262,7 +315,7 @@ if (!$data_market) {
                 <p class="mt-3 text-muted">Memuat data crypto...</p>
             </div>
 
-            <!-- Top 10 Cards Container -->
+            <!-- Top 10 Cards -->
             <div class="row" id="crypto-container" style="display: none;"></div>
         <?php endif; ?>
     </div>
@@ -270,24 +323,44 @@ if (!$data_market) {
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // === DATA DARI PHP ===
+        // === DATA ===
         const cryptoData = <?= json_encode($cryptoNews ?? [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 
-        // === DOM ELEMENTS ===
+        // === DOM ===
         const container = document.getElementById('crypto-container');
         const loading = document.getElementById('loading');
         const searchInput = document.getElementById('search');
+        const themeToggle = document.getElementById('themeToggle');
+
+        // === TEMA: CEK LOCALSTORAGE ===
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.classList.add('active');
+        }
+
+        // === TOGGLE TEMA ===
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                themeToggle.classList.remove('active');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeToggle.classList.add('active');
+            }
+        });
 
         // === RENDER CARD ===
         function render(data) {
             if (!container) return;
             container.innerHTML = '';
-
             if (!data || data.length === 0) {
                 container.innerHTML = `<div class="col-12 text-center py-5 text-muted">Tidak ada data.</div>`;
                 return;
             }
-
             data.forEach(coin => {
                 const price = coin.current_price ?? 0;
                 const change = coin.price_change_percentage_24h ?? 0;
@@ -339,13 +412,12 @@ if (!$data_market) {
                 </div>`;
                 container.innerHTML += card;
             });
-
             loading.style.display = 'none';
             container.style.display = 'flex';
             container.style.flexWrap = 'wrap';
         }
 
-        // === SEARCH REAL-TIME ===
+        // === SEARCH ===
         if (searchInput) {
             searchInput.addEventListener('input', () => {
                 const q = searchInput.value.toLowerCase().trim();
@@ -357,7 +429,7 @@ if (!$data_market) {
             });
         }
 
-        // === RENDER PERTAMA KALI ===
+        // === RENDER PERTAMA ===
         if (cryptoData && cryptoData.length > 0) {
             setTimeout(() => render(cryptoData), 500);
         } else {
@@ -371,14 +443,6 @@ if (!$data_market) {
                 const dir = btn.classList.contains('left') ? -1 : 1;
                 grid.scrollBy({ left: dir * 240, behavior: 'smooth' });
             });
-        });
-
-        // === AUTO-HIDE INDICATORS ===
-        document.querySelector('.trending-grid')?.addEventListener('scroll', function() {
-            const scrollLeft = this.scrollLeft;
-            const maxScroll = this.scrollWidth - this.clientWidth;
-            document.querySelector('.scroll-indicator.left').style.opacity = scrollLeft > 50 ? '1' : '0';
-            document.querySelector('.scroll-indicator.right').style.opacity = (maxScroll - scrollLeft) > 50 ? '1' : '0';
         });
     </script>
 </body>
